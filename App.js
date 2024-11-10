@@ -13,8 +13,6 @@ const app = express();
 app.use(cors({
     credentials: true,
     origin: process.env.NETLIFY_URL || "http://localhost:3000",
-    methods: ["GET", "POST", "PUT", "DELETE"],  //add for fetching users
-    allowedHeaders: ["Content-Type", "Authorization"], //add for fetching users
 }));
 app.use(express.json());
 
@@ -22,14 +20,15 @@ const sessionOptions = {
     secret: process.env.SESSION_SECRET || "kanbas",
     resave: false,
     saveUninitialized: false,
-    proxy: true, // Required when your server is behind a proxy (Render)
-    cookie: {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // Only set 'secure' in production
-        sameSite: process.env.NODE_ENV === "development" ? "lax" : "none", // Use 'lax' for local dev, 'none' for production
-        maxAge: 24 * 60 * 60 * 1000 // 1 day expiration
-    }
 };
+if (process.env.NODE_ENV !== "development") {
+    sessionOptions.proxy = true;
+    sessionOptions.cookie = {
+        sameSite: "none",
+        secure: true,
+        domain: process.env.NODE_SERVER_DOMAIN,
+    };
+}
 app.use(session(sessionOptions));
 
 Hello(app);
