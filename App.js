@@ -13,6 +13,8 @@ const app = express();
 app.use(cors({
     credentials: true,
     origin: process.env.NETLIFY_URL || "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE"],  //add for fetching users
+    allowedHeaders: ["Content-Type", "Authorization"], //add for fetching users
 }));
 app.use(express.json());
 

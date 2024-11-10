@@ -46,9 +46,11 @@ export default function UserRoutes(app) {
     };
 
     const profile = (req, res) => {
+        console.log("Session ID:", req.sessionID); //add for debug purpose
+        console.log("Session Data:", req.session); //add for debug purpose
         const currentUser = req.session["currentUser"];
         if (!currentUser) {
-            res.sendStatus(401);
+            res.sendStatus(401).json({ message: "Not authenticated" }); //.json add for debug purpose
             return;
         }
         res.json(currentUser);
