@@ -22,10 +22,12 @@ const sessionOptions = {
     secret: process.env.SESSION_SECRET || "kanbas",
     resave: false,
     saveUninitialized: false,
+    proxy: true, // Required for cookies to work with Render (proxy)  add for fetching users
 };
 if (process.env.NODE_ENV !== "development") {
     sessionOptions.proxy = true;
     sessionOptions.cookie = {
+        httpOnly: true, //add for fetching users
         sameSite: "none",
         secure: true,
         domain: process.env.NODE_SERVER_DOMAIN,
