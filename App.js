@@ -22,11 +22,11 @@ const sessionOptions = {
     secret: process.env.SESSION_SECRET || "kanbas",
     resave: false,
     saveUninitialized: false,
-    proxy: process.env.NODE_ENV !== "development",
+    proxy: true, // Required when your server is behind a proxy (Render)
     cookie: {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // Only secure in production
-        sameSite: "none", // Allows cross-origin cookies
+        secure: process.env.NODE_ENV === "production", // Only set 'secure' in production
+        sameSite: process.env.NODE_ENV === "development" ? "lax" : "none", // Use 'lax' for local dev, 'none' for production
         maxAge: 24 * 60 * 60 * 1000 // 1 day expiration
     }
 };
