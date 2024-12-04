@@ -1,23 +1,49 @@
-import Database from "../Database/index.js";
+import model from "./model.js";
 
-export function createAssignment(assignment) {
-    const newAssignment = { ...assignment, _id: Date.now().toString() };
-    Database.assignments = [...Database.assignments, newAssignment];
-    return newAssignment;
-}
-
-export function findAssignmentsForCourse(courseId) {
-    return Database.assignments.filter(assignment => assignment.course === courseId);
-}
-
-export function updateAssignment(assignmentId, assignmentUpdates) {
-    const assignment = Database.assignments.find(a => a._id === assignmentId);
-    if (assignment) {
-        Object.assign(assignment, assignmentUpdates);
+// Create a new assignment
+export async function createAssignment(assignment) {
+    try {
+        delete assignment._id; // Ensure no invalid `_id` is passed
+        const newAssignment = await model.create(assignment);
+        return newAssignment;
+    } catch (error) {
+        console.error("Error creating assignment:", error);
+        throw error;
     }
-    return assignment;
 }
 
-export function deleteAssignment(assignmentId) {
-    Database.assignments = Database.assignments.filter(a => a._id !== assignmentId);
+// Find assignments for a specific course
+export async function findAssignmentsForCourse(courseId) {
+    try {
+        const assignments = await model.find({ course: courseId }).populate("course");
+        return assignments;
+    } catch (error) {
+        console.error("Error finding assignments for course:", error);
+        throw error;
+    }
+}
+
+// Update an assignment
+export async function updateAssignment(assignmentId, assignmentUpdates) {
+    try {
+        const updatedAssignment = await model.findByIdAndUpdate(
+            assignmentId,
+            assignmentUpdates,
+            { new: true }
+        );
+        return updatedAssignment;
+    } catch (error) {
+        console.error("Error updating assignment:", error);
+        throw error;
+    }
+}
+
+// Delete an assignment
+export async function deleteAssignment(assignmentId) {
+    try {
+        await model.findByIdAndDelete(assignmentId);
+    } catch (error) {
+        console.error("Error deleting assignment:", error);
+        throw error;
+    }
 }
